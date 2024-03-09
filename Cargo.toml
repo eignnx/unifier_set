@@ -3,13 +3,6 @@ name = "unifier_set"
 version = "0.2.0"
 edition = "2021"
 
-description = "A generic unifier set (disjoint set, union-find) datastructure for use in unification algorithms."
-categories = ["algorithms", "data-structures"]
-keywords = ["union-find", "unification", "disjoint-set", "variables"]
-license = "AGPL-3.0-or-later"
-repository = "https://github.com/eignnx/unifier_set.git"
-
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
