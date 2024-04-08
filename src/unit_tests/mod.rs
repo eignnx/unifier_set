@@ -55,7 +55,7 @@ impl DirectChildren<&'static str> for Term {
     fn map_direct_children<'a>(&'a self, f: impl FnMut(&'a Self) -> Self + 'a) -> Self {
         match self {
             Var(_) => self.clone(),
-            Pred(h, cs) => Pred(h.clone(), cs.iter().map(f).collect()),
+            Pred(h, cs) => Pred(h, cs.iter().map(f).collect()),
         }
     }
 }
