@@ -22,34 +22,25 @@ pub trait ClassifyTerm<Var> {
     }
 }
 
-pub trait DirectChildren<Var>: ClassifyTerm<Var> + Sized
-where
-    Var: Clone,
-{
+pub trait DirectChildren<Var>: ClassifyTerm<Var> {
     /// All *direct* children (and *only* the *direct* children) of `Self` which are of
     /// type `Self` should be yielded.
-    fn direct_children<'a>(&'a self) -> Box<dyn Iterator<Item = Self> + 'a>;
+    fn direct_children<'a>(&'a self) -> Box<dyn Iterator<Item = &'a Self> + 'a>;
 
     /// Given a function, you need to create a new `Self` where your *direct* children
     /// have been replaced with the ones provided by the function.
-    fn map_direct_children(&self, f: impl FnMut(&Self) -> Self) -> Self;
+    fn map_direct_children<'a>(&'a self, f: impl FnMut(&'a Self) -> Self + 'a) -> Self;
 
     /// Returns an iterator of all the the variables contained in `self`. If `self` is a
     /// variable, returns itself.
     /// ## Duplicate Variables
     /// This iterator is *not* de-duplicated. Duplicate variables may appear. You may want
     /// to `collect` this iterator into a set to deduplicate elements.
-    fn variables<'s: 'it, 'it>(&'s self) -> Box<dyn Iterator<Item = Var> + 'it>
-    where
-        Var: 's,
-    {
+    fn variables<'a>(&'a self) -> Box<dyn Iterator<Item = &'a Var> + 'a> {
         if let TermKind::Var(v) = self.classify_term() {
-            Box::new(std::iter::once(v.clone()))
-        } else {
-            Box::new(
-                self.direct_children()
-                    .flat_map(|child| child.variables().collect::<Vec<_>>()),
-            )
+            return Box::new(std::iter::once(v));
         }
+
+        Box::new(self.direct_children().flat_map(|child| child.variables()))
     }
 }
